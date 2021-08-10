@@ -4,8 +4,8 @@ function solution(board) {
     return answer;
 }
 let answer = Infinity;    
-const dx = [-1, 0, 1, 0];
-const dy = [0, -1, 0, 1];
+const dx = [1,-1,0,0];
+const dy = [0,0,1,-1];
 function bfs(x, y, cost, dir, map) {
     let q = [[x, y, cost, dir]];
     map[x][y] = 1;
