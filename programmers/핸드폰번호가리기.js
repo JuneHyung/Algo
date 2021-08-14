@@ -1,3 +1,4 @@
+// 1. split & join
 // function solution(phone_number) {
 //     let arr = phone_number.split("");
 //     let len = phone_number.length;
@@ -10,7 +11,10 @@
 //     return answer;
 // }
 function solution(phone_number) {
+    // 2. repeat & slice
     // let answer = '*'.repeat(phone_number.length - 4) + phone_number.slice(-4);
+
+    // 3. 정규표현식
     let answer = phone_number.replace(/\d(?=\d{4})/g, '*');
     return answer;
 }
