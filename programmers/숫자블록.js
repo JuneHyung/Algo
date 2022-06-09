@@ -1,10 +1,9 @@
-// 시간초과
 function findMeasure(idx) { 
   if(idx===1){
     return 0;
   }else{
-    for (let i =Math.max(2, idx/10000000); i <= Math.sqrt(idx); i++) { 
-      if (idx % i == 0 && idx/i <= 10000000) { 
+    for (let i =2; i <= Math.sqrt(idx); i++) { 
+      if (idx % i == 0 && idx/i <= 1e7) { 
         return idx/i;
       }
     }
