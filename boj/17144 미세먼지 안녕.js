@@ -21,7 +21,7 @@
  * T초후 남은 미세먼지양을 구하자.
  */
 
-const fs = require('fs')
+// const fs = require('fs')
 // const input = fs.readFileSync('/dev/stdin').toString().trim().split('\n')
 const input = [
   '7 8 1',
