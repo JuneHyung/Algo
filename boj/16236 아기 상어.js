@@ -31,7 +31,7 @@ const input = [
 const N = Number(input.shift())
 const BOARD = input.map(el => el.split(' ').map(Number))
 
-const findBabyShark = (n, baby, board) => { 
+const findBabyPos = (n, baby, board) => { 
   for (let i = 0; i < n; i++) { 
     for (let j = 0; j < n; j++) { 
       if (board[i][j] === 9) { 
@@ -42,75 +42,84 @@ const findBabyShark = (n, baby, board) => {
     }
   }
 }
+
 const inRange = (n, x, y) => x >= 0 && y >= 0 && x < n && y < n;
 
+/**
+ * 가까운 물고기순으로 정렬
+ * 1. 거리값이 가까운 순서
+ * 2. 거리가 같을 때 가장 상위
+ * 3. 상위가 같으면 가장 좌측
+ */
 const sortedFish = (fish) => { 
-  // fish = [{x, y, dist}]
-  fish.sort((a, b) => { 
-    if (a.dist < b.dist) return -1;
-    else if (a.dist > b.dist) return 1;
-    else {
-      if (a.x < b.x) return -1;
-      else if (a.x > b.x) return 1;
-      else a.y-a.x
+  fish.sort((a, b) => {
+    if (a.dist > b.dist) return 1;
+    else if (a.dist < b.dist) return -1;
+    else { 
+      if (a.x > b.x) return 1;
+      else if (a.x < b.x) return -1;
+      else return a.y - b.y;
     }
   })
-  return fish;
+  return fish
 }
+
 const solution = (n, board) => { 
-  // console.log(board);
-  const dx = [-1, 1, 0, 0]
-  const dy = [0, 0, -1, 1]
   let answer = 0;
-  const baby = {
+  const dx = [-1, 1, 0, 0];
+  const dy = [0, 0, -1, 1];
+  const baby = { // 아기상어 정보
     x: 0,
     y: 0,
     eat: 0,
-    size: 2,
+    size: 2
   }
-  let fish = [];
-  findBabyShark(n, baby, board);
 
-  const findFishInfo = (x, y) => {
-    let visited = Array.from({ length: n }, () => Array.from({ length: n }, () => false));
+  let fish = []; // 상어 위치에 따라 물고기 정보(x, y, dir)를 저장할 배열
+
+  findBabyPos(n, baby, board) // 현재 아기상어 위치 탐색 후 baby값 update
+
+  // fish 정보 갱신
+  const findFishInfo = (x, y) => { 
+    const visited = Array.from({ length: n }, () => Array.from({ length: n }, () => false));
     fish = [];
-
-    // x, y, 거리
     let q = [[x, y, 0]];
-    while (q.length !== 0) {
+    while (q.length !== 0) { 
       const [curX, curY, curD] = q.shift();
-      for (let k = 0; k < 4; k++) {
+      for (let k = 0; k < 4; k++) { 
         const nx = curX + dx[k];
         const ny = curY + dy[k];
+        const nD = curD + 1;
         if (inRange(n, nx, ny) && !visited[nx][ny] && board[nx][ny] <= baby.size) {
           visited[nx][ny] = true;
-          q.push([nx, ny, curD + 1]);
-          if (board[nx][ny] !== 0 && board[nx][ny] < baby.size) {
-            fish.push({ x: nx, y: ny, dist: curD + 1 })
+          q.push([nx, ny, nD])
+          if (board[nx][ny] !== 0 && board[nx][ny] < baby.size) { // 먹을 수 있는 물고기 정보들 push
+            fish.push({x: nx, y:ny, dist: nD})
           }
         }
       }
     }
-  } // findFishInfo
+  }
 
   findFishInfo(baby.x, baby.y)
   // console.log(fish);
-  
+
   while (fish.length !== 0) { 
-    fish = fish.length===1 ? fish : sortedFish(fish)
-    baby.x = fish[0].x;
-    baby.y = fish[0].y;
-    board[baby.x][baby.y] = 0;
+    fish = fish.length === 1 ? fish : sortedFish(fish); // 여러마리인 경우 먹는 조건에 따라 정렬
+    const first = fish.shift(); // 물고기를 먹
+    baby.x = first.x;
+    baby.y = first.y;
+    board[baby.x][baby.y] = 0; // board 먹은후 0 갱신
     baby.eat++;
-    if (baby.eat === baby.size) {
+
+    if (baby.eat === baby.size) { // eat과 size가 동일해지면, size up 하고 초기화
       baby.size++;
-      baby.eat = 0;
+      baby.eat = 0
     }
-    answer += fish[0].dist;
-    fish.shift();
-    findFishInfo(baby.x, baby.y);
+    answer += first.dist; // answer에 거리 추가.
+    findFishInfo(baby.x, baby.y); // 새로운 위치정보로 다시 물고기정보 갱신
   }
-  if (fish.length === 0) return answer;
-} // solution
+  return answer;
+}// solution
 
 console.log(solution(N, BOARD))
