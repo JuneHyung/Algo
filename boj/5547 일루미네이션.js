@@ -13,6 +13,8 @@
  * (x,y)의 오른쪽에 있는 정 육각형 좌표는 (x+1, y)
  * y가 홀수 일 때, 아래쪽에 있는 정육각형의 좌표는 (x, y+1)
  * y가 짝수 일 때, 오른쪽 아래에 있는 정육각형의 좌표는 (x, y+1)
+ * 
+ * 좌표가 겁나 햇갈리는 문제
  */
 // const fs = require('fs')
 // const input = fs.readFileSync("/dev/stdin").toString().trim().split('\n')
@@ -45,8 +47,10 @@ for(let i=1;i<=H;i++){
 const solution = (w, h, board) => {
   // console.log(board);
   const visited = Array.from({length: H+2}, ()=> Array.from({length: W+2},()=>false))
+  // 좌상, 좌, 좌하, 우하, 우, 우상
   const oddX = [-1, 0, 1, 1, 0, -1];
   const oddY = [0, -1, 0, 1, 1, 1];
+  // 좌상, 좌, 좌하, 우하, 우, 우상
   const evenX = [-1, 0, 1, 1, 0, -1];
   const evenY = [-1, -1, -1, 0, 1, 0];
   const inRange = (x, y) => x>=0 && y>=0 && x<=h+1 && y<=w+1;
