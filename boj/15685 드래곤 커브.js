@@ -29,58 +29,55 @@ const input = [
 const N = Number(input.shift())
 const BOARD = Array.from({ length: 101 }, () => Array.from({ length: 101 }, () => false));
 const INFO = input.map(el => el.split(' ').map(Number)).sort((a, b) => a[3] - b[3]);
+
+function rotateBoard(n, board, info) { 
+  // 우 상 좌 하
+  const dx = [0, -1, 0, 1];
+  const dy = [1, 0, -1, 0];
+  for (let i = 0; i < n; i++) {
+    const [y, x, d, g] = info[i];
+    board[x][y] = true;
+    let [curX, curY, curD, curG] = [x, y, d, 0];
+    let q = [[x, y]];
+    while (curG <= g) { 
+      if (curG === 0) { 
+        const nx = curX + dx[curD];
+        const ny = curY + dy[curD];
+        board[nx][ny] = true;
+        q.push([nx, ny]);
+        curX = nx;
+        curY = ny;
+      }
+      else { 
+        const len = q.length - 1;
+        for (let k = len; k >= 0; k--) { 
+          const [prevX, prevY] = q[k];
+          const nx = prevY - curY + curX;
+          const ny = -1 * (prevX - curX) + curY;
+          board[nx][ny] = true;
+          q.push([nx, ny]);
+        }
+        curX = q[q.length - 1][0];
+        curY = q[q.length - 1][1];
+      }
+      curG++;
+      curD =(curD+1)%4
+    }
+  }
+}
 const getSquare = (board) => { 
   let cnt = 0;
   for (let i = 0; i < 100; i++) { 
     for (let j = 0; j < 100; j++) { 
-      if (board[i][j] && board[i + 1][j] && board[i][j + 1] && board[i + 1][j + 1]) cnt++;
+      if (board[i][j] && board[i][j + 1] && board[i + 1][j] && board[i + 1][j + 1]) cnt++;
     }
   }
   return cnt;
 }
 const solution = (n, board, info) => { 
-  // console.log(info)
-  // 우 상 좌 하
-  const dx = [0, -1, 0, 1];
-  const dy = [1, 0, -1, 0];
-
-  for (let i = 0; i < n; i++) { 
-    const [y, x, d, g] = info[i];
-    board[x][y] = true;
-    
-    let [curX, curY, curD, curG] = [x, y, d, 0];
-    let prev = [[x, y]];
-    while (curG <= g) { 
-      if (curG === 0) {
-        const nx = curX + dx[curD];
-        const ny = curY + dy[curD];
-        prev.push([nx, ny]);
-        board[nx][ny] = true;
-        // 끝 좌표 = 다음 시작좌표
-        curX = nx;
-        curY = ny;
-      } else { 
-        const len = prev.length - 1;
-        for (let k = len-1; k >= 0; k--) { 
-          const [prevX, prevY] = prev[k];
-          const nx = prevY - curY + curX;
-          const ny = -1 * (prevX - curX) + curY;
-          prev.push([nx, ny])
-          board[nx][ny] = true;
-        }
-        // 끝 좌표 = 다음 시작좌표
-        curX = prev[prev.length-1][0];
-        curY = prev[prev.length-1][1];
-      }
-      curG++; // 1세대 증가
-      curD = (curD + 1) % 4; // 90deg
-    }
-  }
-
-  let answer = getSquare(board);
+  rotateBoard(n, board, info);
+  const answer = getSquare(board);
   return answer;
 }
 
-console.log(solution(N, BOARD, INFO));
-
-
+console.log(solution(N, BOARD, INFO))
