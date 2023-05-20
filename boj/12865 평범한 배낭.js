@@ -19,10 +19,10 @@ const [N, K] = input.shift().split(' ').map(Number)
 const ARR = input.map(el => el.split(' ').map(Number));
 ARR.unshift([0,0])
 const solution = (n, k, info) => { 
-  const dp = Array.from({length:n+1}, ()=>Array.from({length:k+1},()=>0));
-  for (let i = 1; i <= n; i++){
-    const [w, v] = info[i]
-    for (let j = 1; j <= k; j++) { 
+  const dp = Array.from({length: n+1},()=>Array.from({length: k+1},()=>0));
+  for(let i=1;i<=n;i++){
+    const [w,v] = info[i]
+    for(let j=1;j<=k;j++){
       dp[i][j] = w <= j ? Math.max(v + dp[i - 1][j - w], dp[i - 1][j]) : dp[i - 1][j];
     }
   }
