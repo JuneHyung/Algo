@@ -17,34 +17,58 @@ const input = '5 17'
 const [N, K] = input.split(' ').map(Number);
 
 
-const solution = (n, k) =>{
-  let answer = Number.MAX_SAFE_INTEGER;
-  const visited = Array.from({length:100001}, ()=>false);
+// const solution = (n, k) =>{
+//   let answer = Number.MAX_SAFE_INTEGER;
+//   const visited = Array.from({length:100001}, ()=>false);
 
-  let q = [[n, 0]];
-  visited[n] = true;
+//   let q = [[n, 0]];
+//   visited[n] = true;
   
-  const inRange=(x)=>x>=0 && x<100001;
+//   const inRange=(x)=>x>=0 && x<100001;
 
-  while(q.length!==0){
-    const [curX, cnt] = q.shift();
+//   while(q.length!==0){
+//     const [curX, cnt] = q.shift();
     
-    if(curX===k) {
-      answer = Math.min(answer, cnt);
-      break;
-    }
+//     if(curX===k) {
+//       answer = Math.min(answer, cnt);
+//       break;
+//     }
 
-    for(const next of [curX*2, curX-1, curX+1]){
-      if(!visited[next] && inRange(next)){
-        visited[next] = true;
-        if(next===curX*2){ 
-          q.push([next, cnt])
+//     for(const next of [curX*2, curX-1, curX+1]){
+//       if(!visited[next] && inRange(next)){
+//         visited[next] = true;
+//         if(next===curX*2){ 
+//           q.push([next, cnt])
+//         }
+//         else{ q.push([next, cnt+1])}
+//       }
+//     }
+//   }
+
+//   return answer;
+// }
+
+const solution = (n, k) => {
+  const time = Array.from({length: 100001}, ()=>Infinity);
+  time[n] = 0;
+  const q= [n];
+  while(q.length!==0){
+    const cur = q.shift();
+    if(cur===k) return time[cur];
+    
+    for(const next of [cur*2, cur-1, cur+1]){
+      if(next>=0 && next<100001 && time[next]===Infinity){
+        if(next===cur*2){
+          time[next] = time[cur];
+          q.push(next);
+        }else{
+          time[next] = time[cur]+1;
+          q.push(next);
         }
-        else{ q.push([next, cnt+1])}
       }
     }
   }
 
-  return answer;
 }
+
 console.log(solution(N, K))
