@@ -11,41 +11,31 @@
  * N과 비용행렬이 주어졌을때 가장 적은 비용을 들이는 외판원의 순회 여행 경로를 구하는 프로그램 작성
  * 
  */
-// const fs = require('fs')
-// const input = fs.readFileSync('/dev/stdin').toString().split('\n')
-const input = [
-  '4',
-'0 10 15 20',
-'5 0 9 10',
-'6 13 0 12',
-'8 8 9 0',
-]
+const fs = require('fs')
+const input = fs.readFileSync('/dev/stdin').toString().split('\n')
+
 const N = Number(input.shift());
 const GRAPH = input.map(el=>el.split(' ').map(Number));
 
 const solution = (n, graph) => {
   let min = Number.MAX_SAFE_INTEGER;
-  const visited = Array.from({length: n},()=>false)
-  const traveling = (depth, n, start, next, sum) => {
+  const visited = Array.from({length: n},()=>false);
+  
+  const travel = (start, next, depth, sum) => {
     if(depth===n && start===next){
       min = Math.min(min, sum);
       return;
-    } 
-
+    }
     for(let i=0;i<n;i++){
-      if(!visited[i] && graph[next][i] > 0){
+      if(!visited[i] && graph[next][i]>0){
         visited[i] = true;
-        if(sum + graph[next][i] < min){
-          traveling(depth+1, n, start, i, sum+graph[next][i]);
-        }
+        if(sum+graph[next][i] < min) travel(start, i, depth+1, sum+graph[next][i])
         visited[i] = false;
       }
     }
   }
 
-  for(let i=0;i<n;i++){
-    traveling(0, n, i, i, 0)
-  }
+  for(let i=0;i<n;i++) travel(i, i, 0, 0);
 
   return min
 }
