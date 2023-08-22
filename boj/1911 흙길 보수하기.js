@@ -30,7 +30,7 @@ const solution = (n, l, info) => {
     const maxStartPoint = Math.max(pos, st);
     const cnt = Math.ceil((ed-maxStartPoint)/l);
     answer+=cnt;
-    pos = maxStartPoint + cnt*L;
+    pos = maxStartPoint + cnt*l;
   }
   return answer;
 }
