@@ -40,5 +40,5 @@ const solution = (name) => {
 
 }
 
-const name = 'BBBAAAB';
+const name = 'BBBAAABAAA';
 console.log(solution(name))
