@@ -12,50 +12,40 @@
 
 const solution = (friends, gifts) => {
   const n = friends.length;
-  const give = {}
-  const receive = {}
-  const point = {};
-  const graph = new Map();
-
+  
+  // 이름 : {친구:0, 친구:0, ...} 형태로 초기화.
   const makeInitialState = () => {
     const initialState = {}
     for(let i=0;i<n;i++) initialState[friends[i]] = 0;
     return initialState;
   }
+  
+  const point = makeInitialState();
+  const graph = new Map();
   // 초기값 세팅
   for(const f of friends){
-    give[f] = 0;
-    receive[f] = 0;
     graph.set(f, makeInitialState())
   }
 
-  // 준선물 받은선물 게산
+  // point 계산 - 주는건 +1, 받는건 -1
   for(const gift of gifts){
     const [g, r] = gift.split(' ')
-    give[g]++;
-    receive[r]++;
-  }
-  // 선물지수 계산
-  for(let i=0;i<n;i++){
-    const cur = friends[i]
-    point[cur] = give[cur] - receive[cur];
+    point[g]+=1;
+    point[r]-=1;
   }
 
   // graph 정보 입력
   for(const gift of gifts){
     const [g, r] = gift.split(' ')
     const giveInfo = graph.get(g)
-
+    
     giveInfo[r]+=1;
-
+    
     graph.set(g, giveInfo)
   }
 
-
-  console.log(graph)
-  console.log(give)
-  console.log(receive)
-  console.log(point)
+  // console.log(point)
+  // console.log(graph)
 
   const answer = makeInitialState();
 
