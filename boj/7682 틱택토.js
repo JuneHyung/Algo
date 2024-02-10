@@ -28,23 +28,21 @@ const solution = (info) => {
   for (let i = 0; i < 3; i++) {
     if (board[i][0] === "O" && board[i][1] === "O" && board[i][2] === "O") {
       OCheck = true;
-      if (XCnt > 0) return "invalid";
+      if (XCnt > OCnt) return "invalid";
+    }
+    if (board[0][i] === "O" && board[1][i] === "O" && board[2][i] === "O") {
+      OCheck = true;
+      if (XCnt > OCnt) return "invalid";
     }
   }
 
-  for (let i = 0; i < 3; i++) {
-    if (board[0][i] === "O" && board[1][i] === "O" && board[2][i] === "O") {
-      OCheck = true;
-      if (XCnt > 0) return "invalid";
-    }
-  }
   if (board[0][0] === "O" && board[1][1] === "O" && board[2][2] === "O") {
     OCheck = true;
-    if (XCnt > 0) return "invalid";
+    if (XCnt > OCnt) return "invalid";
   }
   if (board[0][2] === "O" && board[1][1] === "O" && board[2][0] === "O") {
     OCheck = true;
-    if (XCnt > 0) return "invalid";
+    if (XCnt > OCnt) return "invalid";
   }
 
   // X가 완성되면 O는 적어도 1개 적어야함.
@@ -54,13 +52,12 @@ const solution = (info) => {
       XCheck = true;
       if (OCheck || XCnt === OCnt) return "invalid";
     }
-  }
-  for (let i = 0; i < 3; i++) {
     if (board[0][i] === "X" && board[1][i] === "X" && board[2][i] === "X") {
       XCheck = true;
       if (OCheck || XCnt === OCnt) return "invalid";
     }
   }
+  
   if (board[0][0] === "X" && board[1][1] === "X" && board[2][2] === "X") {
     XCheck = true;
     if (OCheck || XCnt === OCnt) return "invalid";
