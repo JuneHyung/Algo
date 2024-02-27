@@ -18,19 +18,19 @@
  * 분침 = 6*m
  * 시침 = (h%12) * 30 + (1/2)*m + (1/120) * s
  * 
- * 1초사이에 분침과 시침을 따로 만나는 경우가 있기 때문에 => 1초저늬 모든 침의 각도와 1초 후인 현재 각도를 비교.
  * https://howudong.tistory.com/437
  */
 
 const solution = (h1, m1, s1, h2, m2, s2) => {
   let answer = 0;
-  const convertSeconds = (h, m, s) => (h * 60 * 60) + (m * 60) + s;
 
+  const convertSeconds = (h, m, s) => (h * 60 * 60) + (m * 60) + s;
   const start_time = convertSeconds(h1, m1, s1);
   const end_time = convertSeconds(h2, m2, s2);
-  console.log(start_time, end_time)
+  // console.log(start_time, end_time)
+
   const getDegree = (time) => {
-    const [h, m, s] = [(time / 3600), (time % 3600) / 60, (time % 3600) % 60];
+    const [h, m, s] = [Math.floor(time / 3600), Math.floor((time % 3600) / 60), ((time % 3600) % 60)];
     return [
       ((h % 12) * 30) + (m * 0.5) + (s * (1 / 120)),
       (m * 6) + (s * 0.1),
@@ -38,18 +38,19 @@ const solution = (h1, m1, s1, h2, m2, s2) => {
     ]
   }
 
-
+	// 시침 겹침 여부 확인
   const isHourOverlap = (cur, next) => {
     const [cur_hour, cur_minute, cur_second] = cur;
     const [next_hour, next_minute, next_second] = next;
-    console.log(cur_hour, ' ',cur_second)
-    if(cur_hour>cur_second && next_hour<=next_second){console.log('dd?'); return true;}
+
+    if(cur_hour>cur_second && next_hour<=next_second) return true;
     
     // 354도에서 0도로 넘어갈 때 예외 케이스.
     if(cur_second === 354 && cur_hour > 354) return true;
 
     return false;
   }
+	// 분침 겹침 여부 확인
   const isMinuteOverlap = (cur, next) => {
     const [cur_hour, cur_minute, cur_second] = cur;
     const [next_hour, next_minute, next_second] = next;
@@ -66,23 +67,19 @@ const solution = (h1, m1, s1, h2, m2, s2) => {
   for (let time = start_time; time < end_time; time++) {
     let cur = getDegree(time);
     let next = getDegree(time + 1);
-
     const hourOverlap = isHourOverlap(cur, next);
     const minuteOverlap = isMinuteOverlap(cur, next);
-    console.log(hourOverlap, minuteOverlap);
 
     // 초침이 분침과 시침 겹침이 발생했을 때
     if(hourOverlap && minuteOverlap){
-      // 시침과 분침의 각도가 같으면 +1, 아니면 +2
-      if(next[0]===next[1]) answer++;
-      else answer+=2;
-      // answer = next[0]===next[1] ? answer+1 : answer+2;
+      answer = next[0]===next[1] ? answer+1 : answer+2;
     }
     // 둘중 하나라도 겹치면 +1
-    else if(hourOverlap || minuteOverlap){ console.log('d?'); answer++;  }
+    else if(hourOverlap || minuteOverlap)answer++;
   } // for
+
   // 시작시간에 대한 검사.
-  // 0또는 12ㅔ 시작한다면, 한 번 겹치고 시작하므로 +1
+  // 0또는 12시에 시작한다면, 한 번 겹치고 시작하므로 +1
   if(start_time===0 || start_time===43200) answer++;
 
   return answer;  
