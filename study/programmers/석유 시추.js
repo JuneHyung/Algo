@@ -28,35 +28,39 @@ const solution = (land) => {
 
   for(let j=0;j<m;j++){
     for(let i=0;i<n;i++){
-      let indexSet = new Set(); // 석유 덩어리 얻을 수 있는 Index set
+      let indexSet = new Set(); // 석유덩어리 index set
       let cnt = 0;
       if(land[i][j]===1){
-        const q = [[i, j]];
+        const q = [[i,j]];
         while(q.length!==0){
-          let [x, y] = q.shift();
-          if(land[x][y]===1){
-            land[x][y] = 0;
+          const [cx, cy] = q.shift();
+
+          if(land[cx][cy]===1){
+            land[cx][cy] = 0;
             cnt++;
-            if(!indexSet.has(y)) indexSet.add(y);
-  
+            
+            if(!indexSet.has(cy)) indexSet.add(cy);
+
             for(let k=0;k<4;k++){
-              let nx = x+dx[k];
-              let ny = y+dy[k];
+              const nx = cx+dx[k];
+              const ny = cy+dy[k];
               if(inRange(nx,ny) && land[nx][ny]===1){
-                q.push([nx, ny]);
+                q.push([nx,ny])
               }
             }
-          }
-        }
+          } // if(land[cx][cy]===1)
+        } // while
         if(cnt!==0){
-          for(let idx of indexSet){
-            storage.set(idx, storage.has(idx)? storage.get(idx)+cnt : cnt)
+          for(const idx of indexSet){
+            console.log(i, j, idx)
+            console.log()
+            storage.set(idx, storage.has(idx) ? storage.get(idx)+cnt : cnt); 
           }
         }
-      }
+      } // if(land[i][j]===1)
+      console.log(i, j)
     }
   }
-  // console.log(storage)
-  return Math.max(...storage.values());
+  return Math.max(...storage.values())
 };
 console.log(solution(land));
