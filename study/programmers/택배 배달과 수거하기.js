@@ -20,44 +20,46 @@
 
 const solution = (cap, n, deliveries, pickups) => {
   let answer = 0;
-  // 뒤에서 부터
-  for(let i=n-1;i>=0;i--){
+  let deliSum = deliveries.reduce((a,c)=>a+c,0);
+  let pickSum = pickups.reduce((a,c)=>a+c,0);
 
-    const deli = deliveries[i];
-    const pick = pickups[i];
-
-    // 방문횟수
-    let deliCnt = deli===0 ? 0 : Math.ceil(deli/cap)
-    let pickCnt = pick===0 ? 0 : Math.ceil(pick/cap)
-
-    if(deliCnt===0 && pickCnt===0) continue;
-
-    // 최대 방문횟수.
-    let visit = Math.max(deliCnt, pickCnt);
-    answer += visit * (i+1) * 2;
-
-    // 배달 가능 상자와 수거 가능 상자
-    let deliBox = visit*cap;
-    let pickBox = visit*cap;
-
-    for(let j=i;j>=0;j--){
-      if(deliBox<=0) break;
-      if(deliBox>0){ // 운반 가능 할때 그전꺼 뺴두기
-        const box = Math.min(deliBox, deliveries[j])
-        deliveries[j] -= box;
-        deliBox -= box;  
-      }
-    }
-
-    for(let j=i;j>=0;j--){
-      if(pickBox<=0) break;
-      if(pickBox>0){ // 운반 가능 할때 그전꺼 뺴두기
-        const box = Math.min(pickBox, pickups[j])
-        pickups[j] -= box;
-        pickBox -= box;  
-      }
+  const removeZero = (arr) =>{
+    for(let i=arr.length-1; i>=0; i--){
+      if(arr[i]===0){
+        arr.pop();
+      }else break;
     }
   }
+
+  // cap만큼 제거
+  const removeItem = (arr, cap) => {
+    let cnt = 0;
+    for(let i = arr.length-1; i>=0;i--){
+      if(arr[i]>=cap){
+        arr[i]-=cap;
+        cnt+=cap;
+        break;
+      }else{
+        cap-=arr[i];
+        cnt+=arr[i];
+        arr[i]=0;
+      }
+    }
+    return cnt;
+  }
+
+  while(deliSum>0 || pickSum>0){
+    removeZero(deliveries);
+    removeZero(pickups);
+
+    const len = Math.max(deliveries.length, pickups.length);
+    answer += len*2;
+
+    deliSum -= removeItem(deliveries, cap)
+    pickSum -= removeItem(pickups, cap)
+  }
+
+
   return answer;
 }
 
@@ -66,5 +68,10 @@ const cap = 4;
 const n =5
 const deliveries = [1, 0, 3, 1, 2]
 const pickups = [0, 3, 0, 4, 0]
+// const cap = 2;
+// const n =7;
+// const deliveries = [1, 0, 2, 0, 1, 0, 2]
+// const pickups = [0, 2, 0, 1, 0, 2, 0]
 
 console.log(solution(cap, n, deliveries, pickups))
+
