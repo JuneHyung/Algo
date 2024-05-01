@@ -14,20 +14,26 @@
  * 공의 입사각과 반사각은 항상 동일
  * 꼭지점에 부딪히면 진입방향의 반대방향으로 진행.
  * 두 공좌표가 일치해야 맞았다고 판단.
+ *
+ * https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&blogId=yh6613&logNo=220147018035
+ *
+ * c**2 = a**2 + b**2
  */
 const solution = (m, n, startX, startY, balls) => {
+  const answer = [];
+
   const getDist = (dir, endX, endY) => {
     switch (dir) {
-      case "u":
-        if (startX === endX && startY <= endY) return Infinity;
-        return Math.abs(endX - startX) ** 2 + (n + n - Math.abs(endY + startY)) ** 2;
-      case "d":
+      case "U":
         if (startX === endX && startY >= endY) return Infinity;
         return Math.abs(endX - startX) ** 2 + Math.abs(endY + startY) ** 2;
-      case "l":
+      case "D":
+        if (startX === endX && startY <= endY) return Infinity;
+        return Math.abs(endX - startX) ** 2 + (n + n - Math.abs(endY + startY)) ** 2;
+      case "L":
         if (startY === endY && startX >= endX) return Infinity;
         return Math.abs(endY - startY) ** 2 + Math.abs(endX + startX) ** 2;
-      case "r":
+      case "R":
         if (startY === endY && startX <= endX) return Infinity;
         return Math.abs(endY - startY) ** 2 + (m + m - Math.abs(endX + startX)) ** 2;
       default:
@@ -35,20 +41,35 @@ const solution = (m, n, startX, startY, balls) => {
     }
   };
 
-  const answer = [];
-
   for (const [x, y] of balls) {
-    const directions = [getDist("u", x, y), getDist("d", x, y), getDist("l", x, y), getDist("r", x, y)];
+    const directions = [getDist("U", x, y), getDist("D", x, y), getDist("L", x, y), getDist("R", x, y)];
     answer.push(Math.min(...directions));
   }
   return answer;
 };
 
-const m = 10,  n = 10;
-const startX = 3,  startY = 7;
+const m = 10,
+  n = 10;
+const startX = 3,
+  startY = 7;
 const balls = [
   [7, 7],
   [2, 7],
   [7, 3],
 ];
 console.log(solution(m, n, startX, startY, balls));
+
+
+/**
+0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 E 0 0 0
+0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0
+0 0 E S 0 0 0 E 0 0 0
+0 0 0 0 0 0 0 0 0 0 0
+0 S 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0
+ */
