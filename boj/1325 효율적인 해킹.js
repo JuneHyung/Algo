@@ -7,46 +7,59 @@
  * 한 번에 가장 많은 컴퓨터를 해킹할 수 있는 컴퓨터의 번호를 오름차순 출력.
  * 시간초과
  */
-// const fs = require('fs')
-// const input = fs.readFileSync('/dev/stdin').toString().trim().split('\n')
-const input = [
-  '2 2',
-'1 2',
-'2 1',
-]
-const [N, M] = input.shift().split(' ').map(Number)
-const INFO = input.map(el=>el.split(' ').map(Number));
+const fs = require('fs');
+const filePath = process.platform === 'linux' ? '/dev/stdin' : './input.txt';
+const [info, ...input] = fs
+    .readFileSync(filePath)
+    .toString()
+    .trim()
+    .split('\n')
+    .map((item) => item.split(' ').map((value) => +value));
 
+const [N, M] = info;
 
-const solution = (n, m, info) =>{
-  const graph =Array.from({length:n+1},()=>[])
-  for(const [a, b] of info) graph[a].push(b)
-  console.log(graph);
-  let max = 0;
-  let answer =Array.from({length:n+1},()=>[])
+const solution = () => {
+    const graph = Array.from({ length: N + 1 }, () => []);
 
-  const dfs = (L, visited) => {
-    visited[L] = true;
-    for(const cur of graph[L]){
-      if(!visited[cur]){
-        answer[cur]++;
-        dfs(cur, visited)
-      }
+    for (let i = 0; i < M; i++) {
+        const [a, b] = input[i];
+        graph[b].push(a);
     }
-  }
 
-  for(let i=1;i<=n;i++){
-    const visited = Array.from({length:n+1},()=>false)
-    dfs(i, visited)
-  }
-  max = Math.max(max, ...answer);
+    let max = 0; // 최대 해킹 컴퓨터 수
+    let answer = [];
 
-  let result = '';
-  for(let i=1;i<=n;i++){
-    if(max===answer[i]) result += `${i} `;
-  }
-  
-  return result;
-}
+    const DFS = (n) => {
+        let check = Array.from({ length: N + 1 }, () => 0);
+        let count = 1; // 해킹된 컴퓨터 수
+        let stack = [n]; // DFS 탐색 스택
 
-console.log(solution(N, M, INFO))
+        check[n] = 1;
+
+        while (stack.length) {
+            const value = stack.pop();
+            for (let i = 0; i < graph[value].length; i++) {
+                if (!check[graph[value][i]]) {
+                    count += 1;
+                    check[graph[value][i]] = 1;
+                    stack.push(graph[value][i]);
+                }
+            }
+        }
+
+        if (max > count) return;
+        else if (max === count) answer.push(n);
+        else {
+            max = count;
+            answer = [n];
+        }
+    };
+
+    for (let i = 1; i <= N; i++) {
+        DFS(i);
+    }
+
+    return answer.join(' ');
+};
+
+console.log(solution());
