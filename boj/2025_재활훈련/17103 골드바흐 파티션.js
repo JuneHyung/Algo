@@ -20,17 +20,16 @@
  * 2. b가 1이되는 경우 체크
  * 3. 짝수인경우 continue하게 변경
  */
+/**
+ * 반례 4일떄 0, ans: 1
+ */
 // const fs = require('fs')
 // const input = fs.readFileSync('/dev/stdin').toString().trim().split('\n').map(Number)
 const input = [
-  '5',
-  '6',
-  '8',
-  '10',
-  '12',
-  '100',
+  1,
+  4,
 ]
-const T = Number(input[0]);
+const T = input[0];
 const max = Math.max(...input.slice(1));
 const prime = Array.from({ length: max + 1 }, () => true);
 prime[0] = false, prime[1] = false;
@@ -44,6 +43,8 @@ for (let i = 2; i <= sqrt; i++) {
 }
 
 const solution = (n) => {
+  if (n === 4) return 1;
+
   let cnt = 0;
   for (i = 2; i <= Math.floor(n / 2); i++) { // 순서만 바뀐건 1개
     const a = i;
