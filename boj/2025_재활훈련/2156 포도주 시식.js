@@ -26,25 +26,50 @@ const input = [
 const N = Number(input[0])
 const WineList = input.slice(1).map(Number);
 
+// const solution = (n, wineList) => {
+//   const drinkInfo = Array.from({ length: 3 }, () => Array.from({ length: n }, () => -1))
+
+//   const dfs = (cur, len) => {
+//     if (cur === n) return 0; // 마지막 까지 체크 완료
+//     if (drinkInfo[len][cur] !== -1) return drinkInfo[len][cur];
+
+//     let notDrink = dfs(cur + 1, 0); // 안 마시는 경우
+//     let drink = 0;
+
+//     if (len < 2) { // 3잔 이하면
+//       drink = wineList[cur] + dfs(cur + 1, len + 1); // 마시는 경우
+//     }
+
+//     return drinkInfo[len][cur] = Math.max(notDrink, drink);
+//   }
+
+//   const result = dfs(0, 0);
+//   return result;
+// }
+
 const solution = (n, wineList) => {
-  const drinkInfo = Array.from({ length: 3 }, () => Array.from({ length: n }, () => -1))
+  if (n === 1) return wineList[0]
+  if (n === 2) return wineList[0] + wineList[1]
 
-  const dfs = (cur, len) => {
-    if (cur === n) return 0; // 마지막 까지 체크 완료
-    if (drinkInfo[len][cur] !== -1) return drinkInfo[len][cur];
+  const dp = Array.from({ length: n }, () => 0);
+  dp[0] = wineList[0];
+  dp[1] = wineList[0] + wineList[1];
+  dp[2] = Math.max(wineList[0] + wineList[1], wineList[0] + wineList[2], wineList[1] + wineList[2]);
 
-    let notDrink = dfs(cur + 1, 0); // 안 마시는 경우
-    let drink = 0;
+  for (let i = 3; i < n; i++) {
+    const cur = wineList[i];
+    const prev = wineList[i - 1];
 
-    if (len < 2) { // 3잔 이하면
-      drink = wineList[cur] + dfs(cur + 1, len + 1); // 마시는 경우
-    }
+    const a = dp[i - 1]; // 현재 잔을 마시지 않는 경우
+    const b = dp[i - 2] + cur; // 연속 1잔 [전전까지 최대값, 전X, 현O]
+    const c = dp[i - 3] + prev + cur; //  연속 2잔 [전전전까지 최대값, 전전X, 전O, 현O]
 
-    return drinkInfo[len][cur] = Math.max(notDrink, drink);
+
+    dp[i] = Math.max(a, b, c)
   }
 
-  const result = dfs(0, 0);
-  return result;
+  return dp[n - 1]
+
 }
 
 console.log(solution(N, WineList))
